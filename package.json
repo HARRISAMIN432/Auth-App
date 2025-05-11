@@ -1,0 +1,23 @@
+{
+  "name": "real-estate-marketplace",
+  "version": "1.0.0",
+  "description": "package for mern estate app",
+  "main": "index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HARRISAMIN432/Real-Estate-MERN-APP.git"
+  },
+  "author": "Harris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HARRISAMIN432/Real-Estate-MERN-APP/issues"
+  },
+  "homepage": "https://github.com/HARRISAMIN432/Real-Estate-MERN-APP#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
