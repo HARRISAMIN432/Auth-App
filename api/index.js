@@ -2,13 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRouter = require("./routes/userRoute");
-
+const authRouter = require('./controllers/authController.js')
 dotenv.config();
 
 mongoose
   .connect(process.env.MONGO, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("MongoDB connected");
@@ -25,3 +23,4 @@ app.listen(process.env.PORT, () => {
 });
 
 app.use("/api/user", userRouter);
+app.use('/api/auth', authRouter)
