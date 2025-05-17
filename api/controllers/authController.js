@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const bycryptjs = require("bcryptjs");
+const ErrorHandler = require("../utils/error");
 
 module.exports = async (req, res) => {
   const { username, email, password } = req.body;
@@ -11,6 +12,6 @@ module.exports = async (req, res) => {
       message: "user created successfully",
     });
   } catch (e) {
-    res.status(500).json(e.message);
+    next(e);
   }
 };

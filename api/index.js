@@ -2,12 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRouter = require("./routes/userRoute");
-const authRouter = require('./controllers/authController.js')
+const authRouter = require("./controllers/authController.js");
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO, {
-  })
+  .connect(process.env.MONGO, {})
   .then(() => {
     console.log("MongoDB connected");
   })
@@ -23,4 +22,14 @@ app.listen(process.env.PORT, () => {
 });
 
 app.use("/api/user", userRouter);
-app.use('/api/auth', authRouter)
+app.use("/api/auth", authRouter);
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
+  });
+});
