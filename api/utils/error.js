@@ -1,4 +1,4 @@
-module.exports = (statusCode, message) => {
+exports.ErrorHandler = (statusCode, message) => {
   const error = new Error(message);
   error.statusCode = statusCode;
   error.message = message;

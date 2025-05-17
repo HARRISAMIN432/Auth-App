@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import error from "../../../api/utils/error";
 
 function SignUp() {
   const [formData, setFormData] = useState({});
@@ -33,7 +32,7 @@ function SignUp() {
       }
       setLoading(false);
       console.log(data);
-      navigate("/sign-in");
+      navigate("/signin");
     } catch (e) {
       setLoading(false);
       setError(e.message);
