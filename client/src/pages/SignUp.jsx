@@ -19,7 +19,7 @@ function SignUp() {
     try {
       setLoading(true);
       const res = await fetch("/api/auth/signup", {
-        method: "Post",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -42,7 +42,7 @@ function SignUp() {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
-      <form action={handleSumit} className="flex flex-col gap-4">
+      <form onSubmit={handleSumit} className="flex flex-col gap-4">
         <input
           type="text"
           placeholder="username"
@@ -74,7 +74,7 @@ function SignUp() {
       <div className="flex gap-2 mt-5">
         <p>Have an account?</p>
         <Link to={"/sign-in"}>
-          <span className="text-blue-700">Sign in</span>
+          <span className="text-blue-700">Sign up</span>
         </Link>
       </div>
       {error && <p className="text-red-500 mt-5">{error}</p>}

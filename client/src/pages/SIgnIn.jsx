@@ -1,12 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import {
+  signInStart,
+  signInFailure,
+  signInSuccess,
+} from "../redux/user/userSlice";
+import { useSelector } from "react-redux";
 
 function SignIn() {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -17,7 +23,7 @@ function SignIn() {
   const handleSumit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "Post",
         headers: {
@@ -27,22 +33,21 @@ function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        setError(data.message), setLoading(false);
+        dispatch(signInFailure(data.message));
         return;
       }
-      setLoading(false);
+      dispatch(signInSuccess(data.message));
       console.log(data);
       navigate("/");
     } catch (e) {
-      setLoading(false);
-      setError(e.message);
+      dispatch(signInFailure(e));
     }
   };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
-      <form action={handleSumit} className="flex flex-col gap-4">
+      <form onSubmit={handleSumit} className="flex flex-col gap-4">
         <input
           type="email"
           placeholder="email"
@@ -70,7 +75,7 @@ function SignIn() {
           <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
-      {error && <p className="text-red-500 mt-5">{error}</p>}
+      {error && <p className="text-red-500 mt-5">{error.message}</p>}
     </div>
   );
 }
