@@ -46,21 +46,21 @@ function SignUp() {
         <input
           type="text"
           placeholder="username"
-          className="border-none bg-white p-3 rounded-lg placeholder-gray-400"
+          className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="username"
           onChange={handleChange}
         />
         <input
           type="email"
           placeholder="email"
-          className="border-none bg-white p-3 rounded-lg placeholder-gray-400"
+          className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="email"
           onChange={handleChange}
         />
         <input
           type="password"
           placeholder="password"
-          className="border-none bg-white p-3 rounded-lg placeholder-gray-400"
+          className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="password"
           onChange={handleChange}
         />

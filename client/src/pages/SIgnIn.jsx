@@ -52,14 +52,14 @@ function SignIn() {
         <input
           type="email"
           placeholder="email"
-          className="border-none bg-white p-3 rounded-lg placeholder-gray-400"
+          className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="email"
           onChange={handleChange}
         />
         <input
           type="password"
           placeholder="password"
-          className="border-none bg-white p-3 rounded-lg placeholder-gray-400"
+          className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="password"
           onChange={handleChange}
         />
@@ -74,7 +74,7 @@ function SignIn() {
       <div className="flex gap-2 mt-5">
         <p>Don't have an account?</p>
         <Link to={"/signup"}>
-          <span className="text-blue-700">Sign in</span>
+          <span className="text-blue-700">Sign up</span>
         </Link>
       </div>
       {error && <p className="text-red-500 mt-5">{error.message}</p>}
