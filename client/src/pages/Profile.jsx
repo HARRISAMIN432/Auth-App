@@ -1,10 +1,18 @@
 import { useSelector } from "react-redux";
 import { useRef, useState } from "react";
+import {
+  updateUserFailure,
+  updateUserStart,
+  updateUsersuccess,
+} from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
 
 function Profile() {
   const fileRef = useRef(null);
-  const [form, setFormData] = useState({});
-  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({});
+  const { currentUser, loading, error } = useSelector((state) => state.user);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -13,10 +21,32 @@ function Profile() {
     });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) dispatch(updateUserFailure(data.message));
+      else {
+        dispatch(updateUsersuccess(data.message));
+        setUpdateSuccess(true);
+      }
+    } catch (e) {
+      dispatch(updateUserFailure(e.message));
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form action={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input type="file" ref={fileRef} hidden accept="image/*" />
         <img
           onClick={() => {
@@ -47,14 +77,21 @@ function Profile() {
           id="password"
           onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer">
-          update
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer"
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700 cursor-pointer">Delete Account</span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
+      <p className="text-red-700 text-center">{error ? error : ""}</p>
+      <p className="text-red-700 text-center">
+        {updateSuccess ? "User is updated Successfully" : ""}
+      </p>
     </div>
   );
 }

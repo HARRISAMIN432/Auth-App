@@ -13,7 +13,7 @@ exports.updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.id)
     return next(ErrorHandler(401, "User ID did not match"));
   try {
-    if (req.body.password) bcrypt.hashSync(req.body.password, 10);
+    if (req.body.password) bcryptjs.hashSync(req.body.password, 10);
     const updateUser = await User.findByIdAndUpdate(
       req.params.id,
       {
