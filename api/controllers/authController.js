@@ -61,10 +61,19 @@ exports.google = async (req, res, next) => {
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = newUser._doc;
-      res.cookie("access_token", token, { httpOnly: true }).status(200).json({
-        rest,
-      });
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
     }
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.signout = async (req, res, next) => {
+  try {
+    res.clearcookie("access_token");
   } catch (e) {
     next(e);
   }

@@ -7,6 +7,9 @@ import {
   deleteUserFailure,
   deleteUserSuccess,
   deleteUserStart,
+  signOutStart,
+  signOutFailure,
+  signOutSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 
@@ -29,6 +32,19 @@ function Profile() {
       } else dispatch(deleteUserSuccess(data));
     } catch (e) {
       deleteUserFailure(e.message);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutStart());
+      const res = await fetch("/api/auth/signout");
+      const data = await res.json();
+      data.success === false
+        ? dispatch(signOutFailure(data.message))
+        : dispatch(signOutSuccess());
+    } catch (e) {
+      dispatch(signOutFailure(e));
     }
   };
 
