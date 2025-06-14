@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRef, useState } from "react";
 import {
   updateUserFailure,
@@ -11,7 +11,6 @@ import {
   signOutFailure,
   signOutSuccess,
 } from "../redux/user/userSlice";
-import { useDispatch } from "react-redux";
 
 function Profile() {
   const fileRef = useRef(null);
@@ -19,19 +18,75 @@ function Profile() {
   const [formData, setFormData] = useState({});
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [file, setFile] = useState(undefined);
+  const [fileUploadError, setFileUploadError] = useState(null);
+  const [fileUploadSuccess, setFileUploadSuccess] = useState(false);
+  const [fileUploading, setFileUploading] = useState(false);
+
+  console.log("Selected file:", file);
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    setFileUploadError(null);
+    setFileUploadSuccess(false);
+  };
+
+  const handleFileUpload = async (file) => {
+    if (!file) {
+      setFileUploadError("Please select a file to upload");
+      return;
+    }
+
+    try {
+      setFileUploading(true);
+      setFileUploadError(null);
+      setFileUploadSuccess(false);
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch("/api/user/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success === false) {
+        setFileUploadError(data.message);
+        setFileUploading(false);
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        profilePicture: data.url,
+      }));
+      setFileUploadSuccess(true);
+      setFile(null);
+      fileRef.current.value = null;
+      setFileUploading(false);
+    } catch (error) {
+      setFileUploadError(error.message);
+      setFileUploading(false);
+    }
+  };
 
   const handleDelete = async () => {
     try {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "Delete",
+        method: "DELETE",
       });
       const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
-      } else dispatch(deleteUserSuccess(data));
+      } else {
+        dispatch(deleteUserSuccess());
+      }
     } catch (e) {
-      deleteUserFailure(e.message);
+      dispatch(deleteUserFailure(e.message));
     }
   };
 
@@ -40,11 +95,13 @@ function Profile() {
       dispatch(signOutStart());
       const res = await fetch("/api/auth/signout");
       const data = await res.json();
-      data.success === false
-        ? dispatch(signOutFailure(data.message))
-        : dispatch(signOutSuccess());
+      if (data.success === false) {
+        dispatch(signOutFailure(data.message));
+      } else {
+        dispatch(signOutSuccess());
+      }
     } catch (e) {
-      dispatch(signOutFailure(e));
+      dispatch(signOutFailure(e.message));
     }
   };
 
@@ -67,9 +124,10 @@ function Profile() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (data.success === false) dispatch(updateUserFailure(data.message));
-      else {
-        dispatch(updateUsersuccess(data.message));
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+      } else {
+        dispatch(updateUsersuccess(data));
         setUpdateSuccess(true);
       }
     } catch (e) {
@@ -81,20 +139,33 @@ function Profile() {
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input type="file" ref={fileRef} hidden accept="image/*" />
+        <input
+          type="file"
+          onChange={handleFileChange}
+          ref={fileRef}
+          hidden
+          accept="image/*"
+        />
         <img
-          onClick={() => {
-            fileRef.current.click();
-          }}
-          src={currentUser.profilePicture}
-          alt="Pic not found"
+          onClick={() => fileRef.current.click()}
+          src={formData.profilePicture || currentUser.profilePicture}
+          alt="Profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center"
         />
+        <button
+          type="button"
+          onClick={() => handleFileUpload(file)}
+          className="bg-blue-700 text-white rounded-lg p-2 uppercase hover:opacity-95 disabled:opacity-80"
+          disabled={fileUploading || !file}
+        >
+          {fileUploading ? "Uploading..." : "Upload Image"}
+        </button>
         <input
           type="text"
           placeholder="username"
           className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="username"
+          defaultValue={currentUser.username}
           onChange={handleChange}
         />
         <input
@@ -102,6 +173,7 @@ function Profile() {
           placeholder="email"
           className="focus:outline-none border-none bg-white p-3 rounded-lg placeholder-gray-400"
           id="email"
+          defaultValue={currentUser.email}
           onChange={handleChange}
         />
         <input
@@ -126,10 +198,22 @@ function Profile() {
           Sign Out
         </span>
       </div>
-      <p className="text-red-700 text-center">{error ? error : ""}</p>
-      <p className="text-red-700 text-center">
-        {updateSuccess ? "User is updated Successfully" : ""}
-      </p>
+      {error && (
+        <p className="text-red-700 text-center">
+          {typeof error === "string" ? error : error.message}
+        </p>
+      )}
+      {updateSuccess && (
+        <p className="text-green-700 text-center">User updated successfully</p>
+      )}
+      {fileUploadError && (
+        <p className="text-red-700 text-center">{fileUploadError}</p>
+      )}
+      {fileUploadSuccess && (
+        <p className="text-green-700 text-center">
+          Image uploaded successfully
+        </p>
+      )}
     </div>
   );
 }

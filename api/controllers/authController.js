@@ -73,7 +73,10 @@ exports.google = async (req, res, next) => {
 
 exports.signout = async (req, res, next) => {
   try {
-    res.clearcookie("access_token");
+    res.clearCookie("access_token");
+    res.status(200).json({
+      message: "success",
+    });
   } catch (e) {
     next(e);
   }
