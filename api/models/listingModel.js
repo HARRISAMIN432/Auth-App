@@ -31,7 +31,7 @@ const listingSchema = mongoose.Schema(
       required: true,
     },
     type: {
-      required: String,
+      type: String,
       required: true,
     },
     offer: {

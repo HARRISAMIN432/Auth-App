@@ -1,3 +1,5 @@
+const Listing = require("../models/listingModel");
+
 exports.createListing = async (req, res, next) => {
   try {
     const listing = await Listing.create(req.body);
