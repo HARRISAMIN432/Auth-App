@@ -9,7 +9,6 @@ const { uploadImage, upload } = require("../utils/upload");
 
 const router = express.Router();
 
-router.route("/test").get(test);
 router.post("/update/:id", verify, updateUser);
 router.delete("/delete/:id", verify, deleteUser);
 router.post("/upload", upload.single("image"), uploadImage);

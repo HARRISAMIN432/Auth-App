@@ -34,25 +34,27 @@ exports.upload = multer({
   },
 });
 
-exports.uploadImage = async (req, res, next) => {
+exports.uploadImage = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file || !req.file.path) {
       return res
         .status(400)
         .json({ success: false, message: "No file uploaded" });
     }
+
     const result = await cloudinary.uploader.upload(req.file.path, {
-      public_id: `uploads/${req.file.filename}`,
       folder: "my_app_uploads",
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "File uploaded successfully",
       url: result.secure_url,
     });
   } catch (error) {
-    console.log(error);
-    next(error);
+    console.error("Upload failed:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Upload failed", error });
   }
 };

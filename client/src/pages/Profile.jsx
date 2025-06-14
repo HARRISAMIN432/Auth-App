@@ -22,8 +22,7 @@ function Profile() {
   const [fileUploadError, setFileUploadError] = useState(null);
   const [fileUploadSuccess, setFileUploadSuccess] = useState(false);
   const [fileUploading, setFileUploading] = useState(false);
-
-  console.log("Selected file:", file);
+  console.log(currentUser);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -42,27 +41,43 @@ function Profile() {
       setFileUploading(true);
       setFileUploadError(null);
       setFileUploadSuccess(false);
-
-      const formData = new FormData();
-      formData.append("image", file);
-
+      const formDataUpload = new FormData();
+      formDataUpload.append("image", file);
       const res = await fetch("/api/user/upload", {
         method: "POST",
-        body: formData,
+        body: formDataUpload,
       });
-
       const data = await res.json();
-
       if (data.success === false) {
         setFileUploadError(data.message);
         setFileUploading(false);
         return;
       }
-
       setFormData((prev) => ({
         ...prev,
         profilePicture: data.url,
       }));
+      dispatch(updateUserStart());
+      const updateRes = await fetch(
+        `/api/user/update/${
+          currentUser.data ? currentUser.data._id : currentUser._id
+        }`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ profilePicture: data.url }),
+        }
+      );
+      const updateData = await updateRes.json();
+      if (updateData.success === false) {
+        dispatch(updateUserFailure(updateData.message));
+        setFileUploadError(updateData.message);
+        setFileUploading(false);
+        return;
+      }
+      dispatch(updateUsersuccess(updateData));
       setFileUploadSuccess(true);
       setFile(null);
       fileRef.current.value = null;
@@ -70,21 +85,25 @@ function Profile() {
     } catch (error) {
       setFileUploadError(error.message);
       setFileUploading(false);
+      dispatch(updateUserFailure(error.message));
     }
   };
 
   const handleDelete = async () => {
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `/api/user/delete/${
+          currentUser.data ? currentUser.data._id : currentUser._id
+        }`,
+        {
+          method: "DELETE",
+        }
+      );
       const data = await res.json();
-      if (data.success === false) {
-        dispatch(deleteUserFailure(data.message));
-      } else {
-        dispatch(deleteUserSuccess());
-      }
+      data.success === false
+        ? dispatch(deleteUserFailure(data.message))
+        : dispatch(deleteUserSuccess());
     } catch (e) {
       dispatch(deleteUserFailure(e.message));
     }
@@ -116,13 +135,18 @@ function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        `/api/user/update/${
+          currentUser.data ? currentUser.data._id : currentUser._id
+        }`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
@@ -148,7 +172,12 @@ function Profile() {
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={formData.profilePicture || currentUser.profilePicture}
+          src={
+            formData.profilePicture ||
+            currentUser.profilePicture ||
+            currentUser.data.profilePicture ||
+            "default-placeholder-image.png"
+          }
           alt="Profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center"
         />

@@ -37,7 +37,9 @@ function Header() {
             {currentUser ? (
               <img
                 className="rounded-full h-7 w-7 object-cover"
-                src={currentUser.profilePicture}
+                src={
+                  currentUser.profilePicture || currentUser.data.profilePicture
+                }
                 alt="Profile photo not found"
               />
             ) : (
