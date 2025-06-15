@@ -11,6 +11,7 @@ import {
   signOutFailure,
   signOutSuccess,
 } from "../redux/user/userSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 function Profile() {
   const fileRef = useRef(null);
@@ -22,7 +23,6 @@ function Profile() {
   const [fileUploadError, setFileUploadError] = useState(null);
   const [fileUploadSuccess, setFileUploadSuccess] = useState(false);
   const [fileUploading, setFileUploading] = useState(false);
-  console.log(currentUser);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -218,6 +218,12 @@ function Profile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link
+          to={"/create-listing"}
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+        >
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={handleDelete} className="text-red-700 cursor-pointer">
