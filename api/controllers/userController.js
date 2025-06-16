@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const { ErrorHandler } = require("../utils/error");
 const bcryptjs = require("bcryptjs");
+const Listing = require("../models/listingModel");
 
 exports.updateUser = async (req, res, next) => {
   if (req.user.id !== req.params.id)
@@ -49,5 +50,16 @@ exports.deleteUser = async (req, res, next) => {
     });
   } catch (e) {
     next(e);
+  }
+};
+
+exports.getListings = async (req, res, next) => {
+  if (req.user.id !== req.params.id)
+    return next(ErrorHandler(401, "Unauthorized access"));
+  try {
+    const listings = Listing.find({ userRef: req.params.id });
+    res.status(200).json(listings);
+  } catch (e) {
+    return next(ErrorHandler(400, "Cant fetch data at the moment"));
   }
 };
