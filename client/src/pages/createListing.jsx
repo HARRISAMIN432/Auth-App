@@ -25,6 +25,7 @@ function CreateListing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listCreated, setListCreated] = useState(false);
+  const navigate = useNavigate();
 
   const handleImageSubmit = async (e) => {
     e.preventDefault();
@@ -111,7 +112,7 @@ function CreateListing() {
     try {
       if (formData.imageUrls.length < 1)
         return setError("You must upload one image");
-      if (formData.regularPrice < formData.discountPrice)
+      if (Number(formData.regularPrice) < Number(formData.discountPrice))
         return setError("Discount price must be lower than regular price");
       setLoading(true);
       setError(false);
@@ -186,7 +187,7 @@ function CreateListing() {
             <div className="flex gap-2">
               <input
                 type="checkbox"
-                id="sale"
+                id="rent"
                 className="w-5"
                 onChange={handleChange}
                 checked={formData.type === "rent"}
@@ -219,7 +220,7 @@ function CreateListing() {
                 id="offer"
                 className="w-5"
                 onChange={handleChange}
-                checked={formData.furnished}
+                checked={formData.offer}
               />
               <span>offer</span>
             </div>
@@ -233,6 +234,8 @@ function CreateListing() {
                 max="10"
                 required
                 className="p-3 border border-gray-300 rounded-lg"
+                value={formData.bedrooms}
+                onChange={handleChange}
               />
               <p>Beds</p>
             </div>
@@ -242,6 +245,8 @@ function CreateListing() {
                 id="bathrooms"
                 min="1"
                 max="10"
+                value={formData.bathrooms}
+                onChange={handleChange}
                 required
                 className="p-3 border border-gray-300 rounded-lg"
               />
@@ -268,8 +273,8 @@ function CreateListing() {
                 <input
                   type="number"
                   id="discountPrice"
-                  min="0"
-                  max="1000000000"
+                  min="49"
+                  max="1000000"
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                   onChange={handleChange}
@@ -296,7 +301,7 @@ function CreateListing() {
               className="p-3 border border-gray-300 rounded w-full"
               type="file"
               id="images"
-              accept="images/*"
+              accept="image/*"
               multiple
             />
             <button

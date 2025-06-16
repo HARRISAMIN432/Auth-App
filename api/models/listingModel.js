@@ -14,6 +14,10 @@ const listingSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    regularPrice: {
+      type: Number,
+      required: true,
+    },
     discountPrice: {
       type: Number,
       required: true,
