@@ -1,9 +1,5 @@
 const express = require("express");
-const {
-  test,
-  updateUser,
-  deleteUser,
-} = require("../controllers/userController");
+const { updateUser, deleteUser } = require("../controllers/userController");
 const { verify } = require("../utils/verifyUser");
 const { uploadImage, upload } = require("../utils/upload");
 
