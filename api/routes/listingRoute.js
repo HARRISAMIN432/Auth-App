@@ -3,13 +3,15 @@ const { verify } = require("../utils/verifyUser");
 const {
   createListing,
   deleteListing,
-  updateListing,
+  updateListings,
+  getListing,
 } = require("../controllers/listingController");
 
 const router = express.Router();
 
 router.post("/create", verify, createListing);
 router.delete("/delete/:id", verify, deleteListing);
-router.post("/update/:id", verify, updateListing);
+router.post("/update/:id", verify, updateListings);
+router.get("/getListing/:id", getListing);
 
 module.exports = router;

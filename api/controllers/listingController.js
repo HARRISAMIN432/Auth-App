@@ -47,3 +47,15 @@ exports.updateListings = async (req, res, next) => {
     next(e);
   }
 };
+
+exports.getListing = async (req, res, next) => {
+  try {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+      return next(ErrorHandler(404, "Listing not found!"));
+    }
+    res.status(200).json(listing);
+  } catch (e) {
+    next(e);
+  }
+};

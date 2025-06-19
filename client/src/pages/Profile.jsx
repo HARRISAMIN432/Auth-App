@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   updateUserFailure,
   updateUserStart,
@@ -12,10 +12,12 @@ import {
   signOutSuccess,
 } from "../redux/user/userSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function Profile() {
   const fileRef = useRef(null);
   const dispatch = useDispatch();
+  const params = useParams();
   const [formData, setFormData] = useState({});
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -32,6 +34,8 @@ function Profile() {
     setFileUploadError(null);
     setFileUploadSuccess(false);
   };
+
+  
 
   const handleFileUpload = async (file) => {
     if (!file) {
@@ -321,7 +325,9 @@ function Profile() {
                 >
                   Delete
                 </button>
-                <button className="text-green-700 uppercase">Edit</button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-700 uppercase">Edit</button>
+                </Link>
               </div>
             </div>
           </div>
