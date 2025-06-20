@@ -34,10 +34,10 @@ function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        dispatch(signInFailure(data));
         return;
       }
-      dispatch(signInSuccess(data.message));
+      dispatch(signInSuccess(data));
       console.log(data);
       navigate("/");
     } catch (e) {

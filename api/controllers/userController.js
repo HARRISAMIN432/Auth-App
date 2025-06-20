@@ -63,3 +63,14 @@ exports.getListings = async (req, res, next) => {
     return next(ErrorHandler(400, "Cant fetch data at the moment"));
   }
 };
+
+exports.getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return next(ErrorHandler(404, "User not found"));
+    const { password: pass, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (e) {
+    return next(ErrorHandler(400, "Cant fetch User data at the moment"));
+  }
+};
