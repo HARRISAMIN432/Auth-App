@@ -35,8 +35,6 @@ function Profile() {
     setFileUploadSuccess(false);
   };
 
-  
-
   const handleFileUpload = async (file) => {
     if (!file) {
       setFileUploadError("Please select a file to upload");
@@ -298,14 +296,11 @@ function Profile() {
       </p>
       {listings && listings.length > 0 ? (
         listings.map((listing) => (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4" key={listing._id}>
             <h1 className="text-center mt-7 text-2xl font-semibold">
               Your Listing
             </h1>
-            <div
-              key={listing._id}
-              className="border rounded-lg p-3 flex justify-between items-center gap-4"
-            >
+            <div className="border rounded-lg p-3 flex justify-between items-center gap-4">
               <Link to={`/listing/${listing._id}`}>
                 <img
                   src={listing.imageUrls[0]}
