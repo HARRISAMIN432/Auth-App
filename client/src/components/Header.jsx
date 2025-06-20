@@ -3,11 +3,13 @@ import { useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Header() {
+  const location = useLocation();
   const navigate = useNavigate();
   const handleSubmit = (e) => {
-    e.preventDefault;
+    e.preventDefault();
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set("searchTerm", searchTerm);
     const searchQuery = urlParams.toString();
@@ -16,14 +18,14 @@ function Header() {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const searchTermFromUrl = urlParams.get("searchTerm", searchTerm);
+    const searchTermFromUrl = urlParams.get("searchTerm");
     if (searchTermFromUrl) {
       setSearchTerm(searchTermFromUrl);
     }
   }, [location.search]);
 
   const { currentUser } = useSelector((state) => state.user);
-  const { searchTerm, setSearchTerm } = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
