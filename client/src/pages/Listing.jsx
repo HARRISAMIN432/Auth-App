@@ -135,7 +135,10 @@ export default function Listing() {
             </ul>
             {listing &&
               currentUser &&
-              String(listing.userRef) !== String(currentUser._id) &&
+              String(listing.userRef) !==
+                String(
+                  currentUser.data ? currentUser.data._id : currentUser._id
+                ) &&
               !contact && (
                 <button
                   onClick={() => setContact(true)}
