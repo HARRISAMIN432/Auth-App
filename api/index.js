@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const userRouter = require("./routes/userRoute");
 const listingRouter = require("./routes/listingRoute");
+const path = require("path");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/authRoute");
 dotenv.config();
@@ -16,6 +17,8 @@ mongoose
     console.error("MongoDB connection error:", err);
   });
 
+const __dirname = path.resolve();
+
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
@@ -27,6 +30,12 @@ app.listen(process.env.PORT, () => {
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/listing", listingRouter);
+
+app.use(express.static(path.join(__dirname, "/client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

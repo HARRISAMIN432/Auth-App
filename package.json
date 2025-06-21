@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node api/index.js",
-    "dev": "nodemon api/index.js"
+    "dev": "nodemon api/index.js",
+    "build": "npm i && npm i --prefix client && npm run build --prefix client"
   },
   "repository": {
     "type": "git",
