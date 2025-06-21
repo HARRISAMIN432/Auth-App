@@ -2,11 +2,14 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ListingItem from "../components/ListingItem";
+import { shallowEqual } from "react-redux";
 
 function Search() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
+  const [sidebar, setSidebar] = useState(false);
+  const [showMore, setShowMore] = useState(false);
   const [sidebardata, setsidebardata] = useState({
     searchTerm: "",
     type: "all",
@@ -16,6 +19,7 @@ function Search() {
     sort: "created_at",
     order: "desc",
   });
+
   const handleChange = (e) => {
     if (
       e.target.id === "all" ||
@@ -43,6 +47,18 @@ function Search() {
       const order = e.target.value.split("_")[1] || "desc";
       setsidebardata({ ...sidebardata, sort, order });
     }
+  };
+
+  const onShowMoreClick = () => {
+    const numberOfListings = listings.length;
+    const urlParams = new URLSearchParams(window.location.search);
+    const startIndex = numberOfListings;
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = fetch(`/api/listing/get?${searchQuery}`);
+    const data = res.json();
+    data.length > 9 ? setShowMore(true) : setShowMore(false);
+    setListings(...listings, ...data);
   };
 
   useEffect(() => {
@@ -75,9 +91,11 @@ function Search() {
     }
     const fetchListings = async () => {
       setLoading(true);
+      setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(`api/listing/get?${searchQuery}`);
       const data = await res.json();
+      if (data.length > 9) setShowMore(true);
       setListings(data);
       setLoading(false);
     };
@@ -215,6 +233,16 @@ function Search() {
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))}
+          {showMore && (
+            <button
+              onClick={() => {
+                onShowMoreClick();
+              }}
+              className="text-green-700 hover:underlne p-7 text-center w-full"
+            >
+              Show More
+            </button>
+          )}
         </div>
       </div>
     </div>
