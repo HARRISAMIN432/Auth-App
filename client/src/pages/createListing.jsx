@@ -244,7 +244,7 @@ function CreateListing() {
                 type="number"
                 id="bathrooms"
                 min="1"
-                max="10"
+                max="100"
                 value={formData.bathrooms}
                 onChange={handleChange}
                 required
@@ -256,8 +256,8 @@ function CreateListing() {
               <input
                 type="number"
                 id="regularPrice"
-                min="50"
-                max="1000000"
+                min="500"
+                max="100000000"
                 required
                 className="p-3 border border-gray-300 rounded-lg"
                 onChange={handleChange}
@@ -274,7 +274,7 @@ function CreateListing() {
                   type="number"
                   id="discountPrice"
                   min="49"
-                  max="1000000"
+                  max="100000000"
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                   onChange={handleChange}

@@ -26,7 +26,7 @@ function ListingItem({ listing }) {
               {listing.address || "No address provided"}
             </p>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 truncate">
             {listing.description || "No description available"}
           </p>
           <p className="text-lg font-semibold text-slate-700 mt-2">
